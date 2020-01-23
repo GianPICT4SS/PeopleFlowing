@@ -1,6 +1,7 @@
 """ a python script ables to detect people in a video-stream.
 USAGE: python3 detection_people.py --input videos/example.mp4 --output output/example_out.avi --yolo yolo-coco
 """
+
 import argparse
 import json
 import logging
@@ -13,7 +14,7 @@ import numpy as np
 from imutils.video import FPS
 from imutils.video import VideoStream
 
-from common.bot import bot
+
 from common.publisher import Publisher_people
 
 pub = Publisher_people(clientID='pub_vid', topic='AulaMagna')
@@ -23,6 +24,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s : %(message)s
                     level=logging.INFO)
 
 logger = logging.getLogger(__name__)
+
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -63,7 +65,7 @@ fps = FPS().start()
 
 # payload pub
 dict_ = {'Time': None, 'Payload': ''}
-pub.start()
+#pub.start()
 
 # loop over the frames from the video stream
 while True:
@@ -110,6 +112,7 @@ while True:
             cv2.putText(frame, label, (startX, y),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, COLORS[idx], 2)
 
+
     if len(ls) <= 5:
         end = datetime.now().strftime('%Y/%m/%d | %H:%M:%S')
         dict_['Time'] = end
@@ -117,10 +120,7 @@ while True:
         payload = json.dumps(dict_)
         time.sleep(1)
         pub.publish(msg=payload)
-        try:
-            bot('Level', 'AulaMagna', 'GREEN')
-        except:
-            pass
+
 
     elif 5 < len(ls) <= 10:
         end = datetime.now().strftime('%Y/%m/%d | %H:%M:%S')
@@ -129,10 +129,7 @@ while True:
         payload = json.dumps(dict_)
         time.sleep(1)
         pub.publish(msg=payload)
-        try:
-            bot('Level', 'AulaMagna', 'BLUE')
-        except:
-            pass
+
     elif 10 < len(ls) <= 20:
         end = datetime.now().strftime('%Y/%m/%d | %H:%M:%S')
         dict_['Time'] = end
@@ -140,10 +137,7 @@ while True:
         payload = json.dumps(dict_)
         time.sleep(1)
         pub.publish(msg=payload)
-        try:
-            bot('Level', 'AulaMagna', 'YELLOW')
-        except:
-            pass
+
     elif len(ls) > 20:
         end = datetime.now().strftime('%Y/%m/%d | %H:%M:%S')
         dict_['Time'] = end
@@ -151,10 +145,8 @@ while True:
         payload = json.dumps(dict_)
         time.sleep(1)
         pub.publish(msg=payload)
-        try:
-            bot('Level', 'AulaMagna', 'RED')
-        except:
-            pass
+
+
 
     cv2.imshow("Frame", frame)
     key = cv2.waitKey(1) & 0xFF
