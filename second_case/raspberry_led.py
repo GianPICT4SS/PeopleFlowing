@@ -6,7 +6,7 @@ from threading import Thread, Event
 import RPi.GPIO as gpio
 
 from common.config import QUEUE
-from common.bot import bot
+
 
 
 class LedProcessor(Thread):
@@ -37,10 +37,6 @@ class LedProcessor(Thread):
                         gpio.output(4, True)
                         #time.sleep(.5)
                         new_msg = QUEUE.get()
-                        try:
-                            bot('Level', 'AulaMagna', 'RED')
-                        except:
-                            pass
                     gpio.output(4, False)
                 elif msg == 'YELLOW':
                     print(f'IN LED: {msg}')
@@ -53,27 +49,9 @@ class LedProcessor(Thread):
                         gpio.output(22, True)
                         # time.sleep(.5)
                         new_msg = QUEUE.get()
-                        try:
-                            bot('Level', 'AulaMagna', 'YELLOW')
-                        except:
-                            pass
+
                     gpio.output(22, False)
-                elif msg == 'BLUE':
-                    print(f'IN LED: {msg}')
-                    new_msg = QUEUE.get()
-                    while new_msg == "BLUE":
-                        gpio.setmode(gpio.BCM)
-                        gpio.setup(9, gpio.OUT)
-                        print(f"LED {new_msg} ON")
-                        # time.sleep(2)
-                        gpio.output(9, True)
-                        # time.sleep(.5)
-                        new_msg = QUEUE.get()
-                        try:
-                            bot('Level', 'AulaMagna', 'BLUE')
-                        except:
-                            pass
-                    gpio.output(9, False)
+
                 elif msg == 'GREEN':
                     print(f'IN LED: {msg}')
                     new_msg = QUEUE.get()
@@ -85,10 +63,7 @@ class LedProcessor(Thread):
                         gpio.output(6, True)
                         # time.sleep(.5)
                         new_msg = QUEUE.get()
-                        try:
-                            bot('Level', 'AulaMagna', 'GREEN')
-                        except:
-                            pass
+
                     gpio.output(6, False)
 
         print('STOP in processor.')

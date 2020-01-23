@@ -14,10 +14,9 @@ import numpy as np
 from imutils.video import FPS
 from imutils.video import VideoStream
 
+from common.config import QUEUE
+from flowing_publisher import Flowing_pub
 
-from common.publisher import Publisher_people
-
-pub = Publisher_people(clientID='pub_vid', topic='AulaMagna')
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s : %(message)s',
                     datefmt='%d/%m/%Y %H:%M ',
@@ -63,9 +62,8 @@ else:
 
 fps = FPS().start()
 
-# payload pub
-dict_ = {'Time': None, 'Payload': ''}
-#pub.start()
+# thread start
+flow_pub = Flowing_pub()
 
 # loop over the frames from the video stream
 while True:
@@ -112,39 +110,13 @@ while True:
             cv2.putText(frame, label, (startX, y),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, COLORS[idx], 2)
 
-
+    # put msg to the queue for the Thread
     if len(ls) <= 5:
-        end = datetime.now().strftime('%Y/%m/%d | %H:%M:%S')
-        dict_['Time'] = end
-        dict_['Payload'] = 'GREEN'
-        payload = json.dumps(dict_)
-        time.sleep(1)
-        pub.publish(msg=payload)
-
-
+        QUEUE.put("GREEN")
     elif 5 < len(ls) <= 10:
-        end = datetime.now().strftime('%Y/%m/%d | %H:%M:%S')
-        dict_['Time'] = end
-        dict_['Payload'] = 'BLUE'
-        payload = json.dumps(dict_)
-        time.sleep(1)
-        pub.publish(msg=payload)
-
-    elif 10 < len(ls) <= 20:
-        end = datetime.now().strftime('%Y/%m/%d | %H:%M:%S')
-        dict_['Time'] = end
-        dict_['Payload'] = 'YELLOW'
-        payload = json.dumps(dict_)
-        time.sleep(1)
-        pub.publish(msg=payload)
-
-    elif len(ls) > 20:
-        end = datetime.now().strftime('%Y/%m/%d | %H:%M:%S')
-        dict_['Time'] = end
-        dict_['Payload'] = 'RED'
-        payload = json.dumps(dict_)
-        time.sleep(1)
-        pub.publish(msg=payload)
+        QUEUE.put("YELLOW")
+    elif len(ls) > 10:
+        QUEUE.put("RED")
 
 
 
@@ -152,11 +124,7 @@ while True:
     key = cv2.waitKey(1) & 0xFF
     # if the `q` key was pressed, break from the loop
     if key == ord("q"):
-        dict_['Payload'] = 'STOP'
-        dict_['Time'] = datetime.now().strftime('%Y/%m/%d | %H:%M:%S')
-        payload = json.dumps(dict_)
-        pub.publish(msg=payload)
-        pub.stop()
+        flow_pub.stop_event()
         end_ = time.time()
         elap = round(end_ - start, 3)
         logger.info(f"single frame took {elap} seconds")
