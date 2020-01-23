@@ -44,6 +44,9 @@ COLORS = np.random.uniform(0, 255, size=(len(CLASSES), 3))
 # load our serialized model from disk
 print("[INFO] loading model...")
 net = cv2.dnn.readNetFromCaffe(args["prototxt"], args["model"])
+#GPU?
+net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
+net.setPreferableTarget(cv2.dnn.DNN_TARGET_OPENCL)
 
 # if a video path was not supplied, grab a reference to the webcam
 if not args.get("input", False):
@@ -107,7 +110,7 @@ while True:
             cv2.putText(frame, label, (startX, y),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, COLORS[idx], 2)
 
-    if len(ls) <= 11:
+    if len(ls) <= 5:
         end = datetime.now().strftime('%Y/%m/%d | %H:%M:%S')
         dict_['Time'] = end
         dict_['Payload'] = 'GREEN'
@@ -119,7 +122,7 @@ while True:
         except:
             pass
 
-    elif 11 < len(ls) <= 15:
+    elif 5 < len(ls) <= 10:
         end = datetime.now().strftime('%Y/%m/%d | %H:%M:%S')
         dict_['Time'] = end
         dict_['Payload'] = 'BLUE'
@@ -130,7 +133,7 @@ while True:
             bot('Level', 'AulaMagna', 'BLUE')
         except:
             pass
-    elif 15 < len(ls) <= 25:
+    elif 10 < len(ls) <= 20:
         end = datetime.now().strftime('%Y/%m/%d | %H:%M:%S')
         dict_['Time'] = end
         dict_['Payload'] = 'YELLOW'
@@ -141,7 +144,7 @@ while True:
             bot('Level', 'AulaMagna', 'YELLOW')
         except:
             pass
-    elif len(ls) > 25:
+    elif len(ls) > 20:
         end = datetime.now().strftime('%Y/%m/%d | %H:%M:%S')
         dict_['Time'] = end
         dict_['Payload'] = 'RED'
